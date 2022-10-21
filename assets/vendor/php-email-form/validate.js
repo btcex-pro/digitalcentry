@@ -14,7 +14,7 @@
 
       let thisForm = this;
 
-      let action = thisForm.getAttribute('action');
+      let action = 'https://protected-tundra-45918.herokuapp.com/contactform-digital-centry' //thisForm.getAttribute('action');
       let recaptcha = thisForm.getAttribute('data-recaptcha-site-key');
       
       if( ! action ) {
@@ -25,7 +25,12 @@
       thisForm.querySelector('.error-message').classList.remove('d-block');
       thisForm.querySelector('.sent-message').classList.remove('d-block');
 
-      let formData = new FormData( thisForm );
+      let formData = {
+        name: thisForm.querySelector('#name').value,
+        subject: thisForm.querySelector('#subject').value,
+        email: thisForm.querySelector('#email').value,
+        message: thisForm.querySelector('#message').value,
+      };
 
       if ( recaptcha ) {
         if(typeof grecaptcha !== "undefined" ) {
@@ -52,8 +57,11 @@
   function php_email_form_submit(thisForm, action, formData) {
     fetch(action, {
       method: 'POST',
-      body: formData,
-      headers: {'X-Requested-With': 'XMLHttpRequest'}
+      headers:  {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
     })
     .then(response => {
       return response.text();
